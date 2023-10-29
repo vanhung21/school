@@ -1,0 +1,26 @@
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<div class="wrapper fadeInDown">
+  <div id="formContent">
+
+    <h2 class="login">Login</h2>
+
+    <form class="login-form" [formGroup]="loginForm">
+      <input type="text" id="email" class="fadeIn second" name="login" placeholder="email"
+    formControlName="email">
+      <input type="text" id="password" class="fadeIn third" name="login" placeholder="password"
+      formControlName="password">
+      <button (click)="login()">Login</button>
+    </form>
+
+    <!-- Remind Passowrd -->
+    <div id="formFooter">
+      <a class="underlineHover" href="#">Forgot Password?</a>
+    </div>
+
+  </div>
+</div>
