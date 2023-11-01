@@ -2,8 +2,12 @@ package com.school.SchoolManagerment.services.admin;
 
 import com.school.SchoolManagerment.dto.SingleStudentDto;
 import com.school.SchoolManagerment.dto.StudentDto;
+import com.school.SchoolManagerment.dto.StudentLeaveDto;
+import com.school.SchoolManagerment.entities.StudentLeave;
 import com.school.SchoolManagerment.entities.Users;
+import com.school.SchoolManagerment.enums.StudentLeaveStatus;
 import com.school.SchoolManagerment.enums.UserRole;
+import com.school.SchoolManagerment.repositories.StudentLeaveRepository;
 import com.school.SchoolManagerment.repositories.UsersRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +23,9 @@ import java.util.stream.Collectors;
 public class AdminServiceImpl implements AdminService {
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private StudentLeaveRepository studentLeaveRepository;
 
     @PostConstruct
     public void createAdminAccount() {
@@ -75,7 +82,33 @@ public class AdminServiceImpl implements AdminService {
         return null;
     }
 
-    @Override
+  @Override
+  public List<StudentLeaveDto> getAllLeave() {
+    return studentLeaveRepository.findAll().stream()
+      .map(StudentLeave::getStudentLeaveDto)
+      .collect(Collectors.toList());
+  }
+
+  @Override
+  public StudentLeaveDto updateStatus(Long id, String status) {
+      Optional<StudentLeave> optionalStudentLeave = studentLeaveRepository.findById(id);
+      if (optionalStudentLeave.isPresent()) {
+          StudentLeave studentLeave = optionalStudentLeave.get();
+          if(status.equalsIgnoreCase("approved")){
+            studentLeave.setStudentStatus(StudentLeaveStatus.approved);
+          } else if(status.equalsIgnoreCase("disapproved")){
+            studentLeave.setStudentStatus(StudentLeaveStatus.disapproved);
+          }
+          StudentLeave updateStudentLeave = studentLeaveRepository.save(studentLeave);
+          StudentLeaveDto updateStudentLeaveDto = new StudentLeaveDto();
+          updateStudentLeaveDto.setId(updateStudentLeave.getId());
+          updateStudentLeaveDto.setStudentStatus(updateStudentLeave.getStudentStatus());
+          return updateStudentLeaveDto;
+      }
+    return null;
+  }
+
+  @Override
     public List<StudentDto> getAllStudent() {
         return usersRepository.findAllByRole(UserRole.STUDENT).stream()
                 .map(Users::getStudentDTO).collect(Collectors.toList());

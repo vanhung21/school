@@ -2,6 +2,7 @@ package com.school.SchoolManagerment.controller;
 
 import com.school.SchoolManagerment.dto.SingleStudentDto;
 import com.school.SchoolManagerment.dto.StudentDto;
+import com.school.SchoolManagerment.dto.StudentLeaveDto;
 import com.school.SchoolManagerment.services.admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,32 @@ public class AdminController {
     public ResponseEntity<?> deleteStudent(@PathVariable Long id){
         adminService.deleteStudent(id);
         return ResponseEntity.ok().body("OK");
+    }
+
+  @GetMapping("/leaves")
+  public ResponseEntity<?> getAllLeave() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication == null || authentication.getName() == null) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
+    }
+    List<StudentLeaveDto> student = adminService.getAllLeave();
+    if (student == null) {
+      return  new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(student);
+  }
+
+    @GetMapping("/leaves/{id}/{status}")
+    public ResponseEntity<?> changeStatus(@PathVariable Long id, @PathVariable String status) {
+//      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//      if(authentication == null || authentication.getName() == null) {
+//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Forbidden");
+//      }
+      StudentLeaveDto student = adminService.updateStatus(id, status);
+      if (student == null) {
+        return  new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+      }
+      return ResponseEntity.status(HttpStatus.OK).body(student);
     }
 
 }
